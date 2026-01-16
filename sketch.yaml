@@ -1,0 +1,16 @@
+default_profile: main
+
+profiles:
+  main:
+    fqbn: m5stack:esp32:m5stack_core
+    platforms:
+      - platform: m5stack:esp32 (2.1.4)
+        platform_index_url: https://static-cdn.m5stack.com/resource/arduino/package_m5stack_index.json
+    libraries:
+      - M5Stack (0.4.6)
+      - TJpg_Decoder (1.1.0)
+      - ArduinoJson (7.0.0)
+    options:
+      UploadSpeed: 921600
+      FlashMode: dio
+      FlashFreq: 80
