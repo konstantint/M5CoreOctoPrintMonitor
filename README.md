@@ -3,6 +3,8 @@
 A small remote monitor for a 3D printer based on an **M5Stack Gray** (which should be compatible with the newer M5Stack Core models).
 The implementation relies on OctoPrint's HomeAssistant integration to view the downscaled camera image and read the sensor data.
 
+![Mini-monitor](device.jpg?raw=true "Mini-monitor")
+
 ## Features
 
 *   **Live Video Feed:** Streams MJPEG snapshots from Home Assistant.
