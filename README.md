@@ -1,6 +1,6 @@
-# M5Stack Gray 3D Printing Mini-Monitor
+# M5Stack Core 3D Printing Mini-Monitor
 
-A small remote monitor for a 3D printer based on an **M5Stack Gray** (which should be compatible with the newer M5Stack Core models).
+A small remote monitor for a 3D printer based on an **M5Stack Gray** (which should be compatible with the newer M5Stack Core models as well).
 The implementation relies on OctoPrint's HomeAssistant integration to view the downscaled camera image and read the sensor data.
 
 ![Mini-monitor](device.jpg?raw=true "Mini-monitor")
