@@ -35,6 +35,7 @@ The device does not communicate with OctoPrint directly. It communicates exclusi
     2.  **Tool Temp:** `sensor.octoprint_actual_tool0_temp`
     3.  **Progress:** `sensor.octoprint_job_percentage`
     4.  **Finish Time:** `sensor.octoprint_estimated_finish_time` (Must handle 'unknown' states).
+    5.  **Printing Status:** `binary_sensor.octoprint_printing` (Used to toggle Pause/Resume).
 
 ## 4. Functional Requirements
 
@@ -48,15 +49,18 @@ The 320x240 screen is strictly divided into three vertical zones to prevent flic
     *   **Content:** Cropped video feed (Top or Bottom aligned).
     *   **Rendering:** Direct push to display memory (No buffering due to RAM limits). Pixels must be strictly clipped to stay within Y=40 and Y=215.
 3.  **Bottom Zone (Y: 215 - 240):** Button Labels.
-    *   **Content:** Static labels aligned with physical buttons ("Pause", "Cancel", "Camera").
-    *   **Rendering:** Static text, redrawn only upon mode change.
+    *   **Content:** Labels aligned with physical buttons.
+        *   **Button A:** "Pause" (if printing) OR "Resume" (if not printing).
+        *   **Button B:** "Cancel".
+        *   **Button C:** "Camera".
+    *   **Rendering:** Text redrawn upon mode change or status change (Printing/Not Printing).
 
 ### 4.2 Application Modes (State Machine)
 The system operates in two distinct modes:
 
 #### Mode A: Viewer (Default)
 *   **Action:** Continuously fetches/decodes JPEG frames and updates sensor data every 5 seconds.
-*   **Button A:** Switches to **Confirmation Mode** (Action: PAUSE).
+*   **Button A:** Switches to **Confirmation Mode** (Action: PAUSE or RESUME depending on status).
 *   **Button B:** Switches to **Confirmation Mode** (Action: CANCEL).
 *   **Button C:** Toggles the `current_camera_entity` between Camera 1 and Camera 2. Displays a temporary "Switching..." overlay.
 

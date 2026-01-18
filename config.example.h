@@ -24,6 +24,7 @@ const String ENT_PROGRESS = "sensor.octoprint_job_percentage";
 const String ENT_FINISH   = "sensor.octoprint_estimated_finish_time";
 const String ENT_BED      = "sensor.octoprint_actual_bed_temp";
 const String ENT_TOOL     = "sensor.octoprint_actual_tool0_temp";
+const String ENT_PRINTING = "binary_sensor.octoprint_printing";
 
 // ================= LAYOUT CONFIGURATION =================
 // Dimensions

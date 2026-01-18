@@ -6,7 +6,7 @@
 #include "config.h"
 
 // App Modes
-enum AppMode { MODE_VIEW, MODE_CONFIRM_PAUSE, MODE_CONFIRM_CANCEL };
+enum AppMode { MODE_VIEW, MODE_CONFIRM_PAUSE, MODE_CONFIRM_RESUME, MODE_CONFIRM_CANCEL };
 AppMode currentMode = MODE_VIEW;
 
 // Buffers & Objects
@@ -19,6 +19,7 @@ float val_bed = 0.0;
 float val_tool = 0.0;
 float val_progress = 0.0;
 long  val_seconds_left = -1;
+bool  is_printing = false;
 bool  data_received = false;
 
 unsigned long lastSensorUpdate = 0;
@@ -107,7 +108,8 @@ void updateSensors() {
   query += "\\\"bed\\\": {{ states('" + ENT_BED + "') | float(0) }},";
   query += "\\\"tool\\\": {{ states('" + ENT_TOOL + "') | float(0) }},";
   query += "\\\"prog\\\": {{ states('" + ENT_PROGRESS + "') | float(0) }},";
-  query += "\\\"left\\\": {{ -1 if states('" + ENT_FINISH + "') in ['unknown', 'unavailable', 'None'] else (as_timestamp(states('" + ENT_FINISH + "')) - as_timestamp(now())) | int(0) }}";
+  query += "\\\"left\\\": {{ -1 if states('" + ENT_FINISH + "') in ['unknown', 'unavailable', 'None'] else (as_timestamp(states('" + ENT_FINISH + "')) - as_timestamp(now())) | int(0) }},";
+  query += "\\\"printing\\\": {{ is_state('" + ENT_PRINTING + "', 'on') | tojson }}";
   query += "}\"}";
 
   int httpCode = http.POST(query);
@@ -122,6 +124,7 @@ void updateSensors() {
       val_tool = doc["tool"];
       val_progress = doc["prog"];
       val_seconds_left = doc["left"];
+      is_printing = doc["printing"];
       data_received = true;
     }
   }
@@ -170,7 +173,8 @@ void drawBottomBarLabels() {
   M5.Lcd.setTextColor(WHITE, BLACK);
 
   M5.Lcd.setCursor(19+10, CAM_END_Y + 5);
-  M5.Lcd.print("Pause");
+  if (is_printing) M5.Lcd.print("Pause");
+  else M5.Lcd.print("Resume");
 
   M5.Lcd.setCursor(106 + 19, CAM_END_Y + 5);
   M5.Lcd.print("Cancel");
@@ -215,8 +219,13 @@ void loop() {
   if (currentMode == MODE_VIEW) {
     
     if (M5.BtnA.wasPressed()) {
-      currentMode = MODE_CONFIRM_PAUSE;
-      drawConfirmationScreen("PAUSE");
+      if (is_printing) {
+        currentMode = MODE_CONFIRM_PAUSE;
+        drawConfirmationScreen("PAUSE");
+      } else {
+        currentMode = MODE_CONFIRM_RESUME;
+        drawConfirmationScreen("RESUME");
+      }
       return; 
     }
     if (M5.BtnB.wasPressed()) {
@@ -274,7 +283,7 @@ void loop() {
     }
   }
 
-  else if (currentMode == MODE_CONFIRM_PAUSE || currentMode == MODE_CONFIRM_CANCEL) {
+  else if (currentMode == MODE_CONFIRM_PAUSE || currentMode == MODE_CONFIRM_CANCEL || currentMode == MODE_CONFIRM_RESUME) {
     if (M5.BtnA.wasPressed()) { 
       beep(); 
       currentMode = MODE_VIEW;
