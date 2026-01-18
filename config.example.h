@@ -26,6 +26,11 @@ const String ENT_BED      = "sensor.octoprint_actual_bed_temp";
 const String ENT_TOOL     = "sensor.octoprint_actual_tool0_temp";
 const String ENT_PRINTING = "binary_sensor.octoprint_printing";
 
+// Button Entities
+const String ENT_BTN_PAUSE  = "button.octoprint_pause_job";
+const String ENT_BTN_RESUME = "button.octoprint_resume_job";
+const String ENT_BTN_CANCEL = "button.octoprint_stop_job";
+
 // ================= LAYOUT CONFIGURATION =================
 // Dimensions
 #define SCREEN_W      320

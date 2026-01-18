@@ -55,6 +55,7 @@ void beep() {
 
 // Forward declarations
 void updateSensors();
+void triggerHAButton(String entity_id);
 void drawTopBar();
 void drawBottomBarLabels();
 
@@ -285,7 +286,21 @@ void loop() {
 
   else if (currentMode == MODE_CONFIRM_PAUSE || currentMode == MODE_CONFIRM_CANCEL || currentMode == MODE_CONFIRM_RESUME) {
     if (M5.BtnA.wasPressed()) { 
-      beep(); 
+      beep();
+      
+      if (currentMode == MODE_CONFIRM_PAUSE) {
+        triggerHAButton(ENT_BTN_PAUSE);
+        is_printing = false;
+      }
+      else if (currentMode == MODE_CONFIRM_RESUME) {
+        triggerHAButton(ENT_BTN_RESUME);
+        is_printing = true;
+      }
+      else if (currentMode == MODE_CONFIRM_CANCEL) {
+        triggerHAButton(ENT_BTN_CANCEL);
+        is_printing = false;
+      }
+ 
       currentMode = MODE_VIEW;
       redrawViewInterface();
     }
@@ -295,4 +310,17 @@ void loop() {
     }
     delay(50); 
   }
+}
+
+void triggerHAButton(String entity_id) {
+  if (WiFi.status() != WL_CONNECTED) return;
+
+  HTTPClient http;
+  http.begin(HA_BASE_URL + "/api/services/button/press");
+  http.addHeader("Authorization", "Bearer " + HA_TOKEN);
+  http.addHeader("Content-Type", "application/json");
+
+  String payload = "{\"entity_id\": \"" + entity_id + "\"}";
+  http.POST(payload);
+  http.end();
 }

@@ -37,6 +37,14 @@ The device does not communicate with OctoPrint directly. It communicates exclusi
     4.  **Finish Time:** `sensor.octoprint_estimated_finish_time` (Must handle 'unknown' states).
     5.  **Printing Status:** `binary_sensor.octoprint_printing` (Used to toggle Pause/Resume).
 
+### 3.4 Control API
+*   **Endpoint:** `POST /api/services/button/press`
+*   **Method:** Home Assistant Service Call.
+*   **Required Entities:**
+    1.  **Pause:** `button.octoprint_pause_job`
+    2.  **Resume:** `button.octoprint_resume_job`
+    3.  **Cancel:** `button.octoprint_stop_job`
+
 ## 4. Functional Requirements
 
 ### 4.1 layout & Display Zones
@@ -65,10 +73,10 @@ The system operates in two distinct modes:
 *   **Button C:** Toggles the `current_camera_entity` between Camera 1 and Camera 2. Displays a temporary "Switching..." overlay.
 
 #### Mode B: Confirmation
-*   **Triggered by:** Pressing Pause or Cancel in Viewer Mode.
+*   **Triggered by:** Pressing Pause, Resume or Cancel in Viewer Mode.
 *   **Display:** Clears screen to black. Shows "Are you sure you want to {ACTION}?"
 *   **Network:** Stops camera streaming to save resources.
-*   **Button A (Yes):** plays an audible beep, (Future: triggers API call), and returns to Viewer Mode.
+*   **Button A (Yes):** plays an audible beep, calls the `button.press` service for the respective entity, immediately updates the internal `is_printing` state, and returns to Viewer Mode.
 *   **Button C (No):** Returns to Viewer Mode without action.
 
 ### 4.3 Sensor Logic
